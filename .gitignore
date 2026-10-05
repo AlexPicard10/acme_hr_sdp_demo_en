@@ -1,0 +1,16 @@
+.databricks/
+build/
+dist/
+__pycache__/
+*.egg-info
+.venv/
+scratch/**
+!scratch/README.md
+data/
+# Local notes (not published)
+CLAUDE.md
+hr-venv/
+.isaac/
+.vscode/
+__builtins__.pyi
+typings/

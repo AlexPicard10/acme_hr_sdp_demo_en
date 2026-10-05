@@ -1,0 +1,26 @@
+resources:
+  pipelines:
+    # SDP pipeline written in SQL → schema acme_hr_en_sql
+    hr_pipeline_sql:
+      name: HR_360_SQL_${bundle.target}
+      # These values are readable from SQL code as ${name} (spark.conf).
+      configuration:
+        "master_data_schema": ${var.master_data_schema}
+        "employees_path_fr": ${var.employees_path_fr}
+        "employees_path_be": ${var.employees_path_be}
+        "absences_path_fr": ${var.absences_path_fr}
+        "absences_path_be": ${var.absences_path_be}
+      libraries:
+        - glob:
+            include: ../src/01-HR_SDP_SQL/00-Data-Sources/**
+        - glob:
+            include: ../src/01-HR_SDP_SQL/01-Employees/**
+        - glob:
+            include: ../src/01-HR_SDP_SQL/02-Absences/**
+      catalog: ${var.catalog}
+      schema: ${var.schema_sql}
+      channel: CURRENT
+      development: ${var.dlt_development_mode}
+      photon: true
+      serverless: true
+      root_path: ../src/01-HR_SDP_SQL

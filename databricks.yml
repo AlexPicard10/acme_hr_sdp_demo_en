@@ -1,0 +1,58 @@
+# Databricks Asset Bundle — ACME HR 360 SDP demo (English edition)
+# Data + Spark Declarative Pipelines (SDP / Lakeflow Declarative Pipelines) demo to upskill
+# HR Data teams on Databricks (fictional company ACME).
+#
+#   UC Volumes (raw HR data) ─► Auto Loader ─► SDP bronze→silver→gold ─► Materialized Views
+#   The same logic is written twice: SQL pipeline (schema acme_hr_en_sql) and Python pipeline
+#   (schema acme_hr_en_python). Governed by Unity Catalog, deployed by this bundle.
+#
+# https://docs.databricks.com/dev-tools/bundles/index.html
+bundle:
+  name: acme_hr_sdp_demo_en
+
+# Bundle sync already honours .gitignore (so data/ is excluded automatically).
+include:
+  - resources/*.yml
+  - resources/*/*.yml
+
+variables:
+  catalog:
+    default: "alp_demo_catalog"
+  # Shared raw-data schema: Volumes landing_fr / landing_be + departments reference data.
+  raw_schema:
+    default: "acme_hr_en"
+  # One target schema per pipeline: same table names, two languages.
+  schema_sql:
+    default: "acme_hr_en_sql"
+  schema_python:
+    default: "acme_hr_en_python"
+  master_data_schema:
+    default: "${var.catalog}.${var.raw_schema}"
+  # Raw HR data: one Unity Catalog Volume per subsidiary (each HRIS's "bucket"),
+  # one folder per dataset. Each pipeline concatenates both sources with Append Flows.
+  employees_path_fr:
+    default: "/Volumes/${var.catalog}/${var.raw_schema}/landing_fr/employees"
+  employees_path_be:
+    default: "/Volumes/${var.catalog}/${var.raw_schema}/landing_be/employees"
+  absences_path_fr:
+    default: "/Volumes/${var.catalog}/${var.raw_schema}/landing_fr/absences"
+  absences_path_be:
+    default: "/Volumes/${var.catalog}/${var.raw_schema}/landing_be/absences"
+  dlt_development_mode:
+    default: true
+
+# The workspace host is NOT hard-coded: deployed from the UI (Git folder → Deployments panel),
+# the bundle targets the current workspace. Adapt `catalog` above to your workspace.
+targets:
+  # --- dev: iterative development ---
+  dev:
+    mode: development
+    default: true
+    variables:
+      dlt_development_mode: true
+
+  # --- prod: production deployment ---
+  prod:
+    mode: production
+    variables:
+      dlt_development_mode: false

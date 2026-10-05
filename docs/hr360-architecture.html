@@ -1,0 +1,326 @@
+<title>ACME HR 360</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#f4f1ea; --surface:#ffffff; --surface-2:#faf8f3;
+    --ink:#20201c; --muted:#6d6a62; --line:#dcd7cc;
+    --accent:#0f766e; --accent-tint:#dcede9;
+    --bronze:#9c6326; --bronze-tint:#f0e3d1;
+    --silver:#5e6572; --silver-tint:#e8eaee;
+    --gold:#a9791f; --gold-tint:#f4e9cb;
+    --prep:#3d5a9e; --prep-tint:#e4eaf6;
+    --ai:#b4461f; --ai-tint:#f8e2d8;
+    --shadow:0 1px 2px rgba(30,28,22,.06),0 6px 20px rgba(30,28,22,.06);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#17160f; --surface:#211f19; --surface-2:#1b1a14;
+      --ink:#f2eee4; --muted:#a6a196; --line:#38352d;
+      --accent:#3ec9bb; --accent-tint:#123330;
+      --bronze:#d8965a; --bronze-tint:#3a2a1a;
+      --silver:#aab0bb; --silver-tint:#2a2d33;
+      --gold:#e0b452; --gold-tint:#382d16;
+      --prep:#8ea8e6; --prep-tint:#1d2438;
+      --ai:#ee8c64; --ai-tint:#3a2016;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#17160f; --surface:#211f19; --surface-2:#1b1a14;
+    --ink:#f2eee4; --muted:#a6a196; --line:#38352d;
+    --accent:#3ec9bb; --accent-tint:#123330;
+    --bronze:#d8965a; --bronze-tint:#3a2a1a;
+    --silver:#aab0bb; --silver-tint:#2a2d33;
+    --gold:#e0b452; --gold-tint:#382d16;
+    --prep:#8ea8e6; --prep-tint:#1d2438;
+    --ai:#ee8c64; --ai-tint:#3a2016;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;line-height:1.5}
+  .wrap{max-width:1240px;margin-inline:auto;padding-inline:20px;padding-block:44px 64px}
+
+  .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);font-weight:500;margin:0 0 14px}
+  h1{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;
+    font-size:clamp(2rem,6vw,3.3rem);line-height:1.02;letter-spacing:-.02em;margin:0;text-wrap:balance}
+  .lede{max-width:70ch;color:var(--muted);font-size:clamp(1rem,1.4vw,1.12rem);margin:16px 0 0}
+  .lede b{color:var(--ink);font-weight:600}
+
+  .diagram{margin:40px 0 12px;overflow-x:auto;border:1px solid var(--line);border-radius:16px;
+    background:var(--surface);box-shadow:var(--shadow);padding:8px}
+  .diagram-inner{min-width:900px}
+  figure{margin:0}
+  svg{display:block;width:100%;height:auto;color:var(--ink)}
+  figcaption{color:var(--muted);font-size:13px;padding:2px 12px 10px;text-align:center}
+
+  .box{fill:var(--surface-2);stroke:var(--line);stroke-width:1.5}
+  .n-bronze{fill:var(--bronze-tint);stroke:var(--bronze);stroke-width:1.5}
+  .n-silver{fill:var(--silver-tint);stroke:var(--silver);stroke-width:1.5}
+  .n-goldwrap{fill:var(--gold-tint);stroke:var(--gold);stroke-width:1.5}
+  .n-prepwrap{fill:var(--prep-tint);stroke:var(--prep);stroke-width:1.5}
+  .n-flow{fill:var(--accent-tint);stroke:var(--accent);stroke-width:1.5}
+  .goldrow{fill:var(--surface);stroke:var(--gold);stroke-width:1}
+  .preprow{fill:var(--surface);stroke:var(--prep);stroke-width:1}
+  .aichip{fill:var(--ai-tint);stroke:var(--ai);stroke-width:1.2}
+  .pipe{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:5 5}
+  .edge{fill:none;stroke:currentColor;stroke-width:2}
+  .edge-d{fill:none;stroke:var(--prep);stroke-width:1.6;stroke-dasharray:4 4}
+  .t{font-family:"IBM Plex Sans",sans-serif;fill:var(--ink)}
+  .th{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;fill:var(--ink)}
+  .tm{font-family:"IBM Plex Mono",monospace;fill:var(--ink)}
+  .mut{fill:var(--muted)}
+  .lay{font-family:"IBM Plex Mono",monospace;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+  .badge{fill:var(--surface);stroke:var(--ink);stroke-width:1.5}
+  .badge-t{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;fill:var(--ink);text-anchor:middle}
+
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:34px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 16px 18px;
+    box-shadow:var(--shadow);border-top:3px solid var(--c,var(--accent));display:flex;flex-direction:column;gap:6px}
+  .card.bronze{--c:var(--bronze)} .card.silver{--c:var(--silver)}
+  .card.gold{--c:var(--gold)} .card.flow{--c:var(--accent)}
+  .card.prep{--c:var(--prep)} .card.ai{--c:var(--ai)}
+  .chead{display:flex;align-items:center;gap:10px}
+  .num{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+    background:var(--surface);border:1.5px solid var(--ink);
+    font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:14px}
+  .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+    font-weight:500;color:var(--c,var(--accent))}
+  .card h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:1.06rem;
+    margin:2px 0 0;letter-spacing:-.01em}
+  .card p{margin:0;color:var(--muted);font-size:.9rem}
+  .tbl{font-family:"IBM Plex Mono",monospace;font-size:.62rem;color:var(--ink);
+    background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:5px 8px;
+    margin-top:auto;overflow-wrap:break-word;line-height:1.7}
+
+  .stack{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px;align-items:center}
+  .stack .lbl{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);margin-right:4px}
+  .pill{font-family:"IBM Plex Mono",monospace;font-size:12px;padding:5px 11px;border-radius:999px;
+    background:var(--accent-tint);color:var(--accent);white-space:nowrap}
+  .pill.prep{background:var(--prep-tint);color:var(--prep)}
+  .pill.ai{background:var(--ai-tint);color:var(--ai)}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Databricks demo · Spark Declarative Pipelines · SQL + Python</p>
+  <h1>ACME HR 360</h1>
+  <p class="lede">From raw extract to a governed 360° view: the extracts of <b>two subsidiaries</b> concatenated,
+  then a declarative <b>bronze → silver → gold</b> pipeline written <b>in SQL and in Python</b> (same logic, two schemas).
+  Synthetic HR data (fictional company <b>ACME</b>), to <b>upskill HR Data teams</b>.</p>
+
+  <div class="diagram">
+   <div class="diagram-inner">
+    <figure>
+      <svg viewBox="0 0 1290 600" role="img"
+        aria-label="Pipeline written in SQL (schema acme_hr_en_sql) and in Python (schema acme_hr_en_python). HR extracts from two subsidiaries dropped into two Unity Catalog Volumes, ingested by Auto Loader and concatenated by two Append Flows in the SDP pipeline: bronze, two silver tables with Expectations, a Materialized View keeping the latest row per employee with ROW_NUMBER, then gold with Auto CDC SCD1, SCD2 and a Materialized View, consumed under Unity Catalog governance.">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <!-- SDP container -->
+        <rect class="pipe" x="312" y="56" width="748" height="508" rx="14"/>
+        <text class="tm mut" x="328" y="82" font-size="13" font-weight="500">SDP pipeline · serverless · 2 languages</text>
+        <rect class="n-flow" x="660" y="66" width="182" height="24" rx="12"/>
+        <text class="tm" x="751" y="82" font-size="10.5" text-anchor="middle">SQL → acme_hr_en_sql</text>
+        <rect class="n-flow" x="850" y="66" width="200" height="24" rx="12"/>
+        <text class="tm" x="950" y="82" font-size="10.5" text-anchor="middle">Python → acme_hr_en_python</text>
+        <text class="tm mut" x="328" y="548" font-size="11.5">Every table: CLUSTER BY AUTO · same names in both schemas</text>
+
+        <!-- edges -->
+        <line class="edge" x1="156" y1="231" x2="173" y2="231" marker-end="url(#ah)"/>
+        <line class="edge" x1="156" y1="449" x2="173" y2="449" marker-end="url(#ah)"/>
+        <path class="edge" d="M296 231 C 316 231, 312 318, 327 322" marker-end="url(#ah)"/>
+        <path class="edge" d="M296 449 C 316 449, 312 362, 327 358" marker-end="url(#ah)"/>
+        <line class="edge" x1="715" y1="244" x2="715" y2="281" marker-end="url(#ah)"/>
+        <line class="edge" x1="422" y1="340" x2="439" y2="340" marker-end="url(#ah)"/>
+        <path class="edge" d="M560 300 C 600 250, 610 220, 627 206" marker-end="url(#ah)"/>
+        <path class="edge" d="M560 380 C 600 430, 610 460, 627 474" marker-end="url(#ah)"/>
+        <path class="edge" d="M800 202 C 814 206, 818 218, 827 228" marker-end="url(#ah)"/>
+        <path class="edge" d="M800 478 C 814 476, 818 472, 827 468" marker-end="url(#ah)"/>
+        <line class="edge" x1="1040" y1="340" x2="1097" y2="340" marker-end="url(#ah)"/>
+
+        <!-- edge labels -->
+        <text class="tm mut" x="340" y="262" font-size="10.5">flow _fr</text>
+        <text class="tm mut" x="340" y="424" font-size="10.5">flow _be</text>
+        <text class="tm mut" x="582" y="244" font-size="11" text-anchor="middle">Expect.</text>
+        <text class="tm mut" x="582" y="446" font-size="11" text-anchor="middle">Expect.</text>
+
+        <!-- Sources: 2 subsidiaries, same structure -->
+        <rect class="box" x="16" y="194" width="140" height="74" rx="10"/>
+        <text class="th" x="30" y="218" font-size="13.5">ACME France</text>
+        <text class="t mut" x="30" y="237" font-size="11">HRIS · employees,</text>
+        <text class="t mut" x="30" y="252" font-size="11">absences + notes</text>
+        <rect class="box" x="16" y="412" width="140" height="74" rx="10"/>
+        <text class="th" x="30" y="436" font-size="13.5">ACME Belgium</text>
+        <text class="t mut" x="30" y="455" font-size="11">HRIS · same</text>
+        <text class="t mut" x="30" y="470" font-size="11">file structure</text>
+        <text class="t mut" x="86" y="345" font-size="10.5" text-anchor="middle">2 "buckets"</text>
+        <text class="tm mut" x="236" y="345" font-size="10.5" text-anchor="middle">schema acme_hr_en</text>
+
+        <!-- Volumes: one per subsidiary -->
+        <rect class="n-flow" x="176" y="194" width="120" height="74" rx="10"/>
+        <text class="th" x="236" y="225" font-size="13" text-anchor="middle">UC Volume</text>
+        <text class="tm mut" x="236" y="245" font-size="10.5" text-anchor="middle">landing_fr</text>
+        <rect class="n-flow" x="176" y="412" width="120" height="74" rx="10"/>
+        <text class="th" x="236" y="443" font-size="13" text-anchor="middle">UC Volume</text>
+        <text class="tm mut" x="236" y="463" font-size="10.5" text-anchor="middle">landing_be</text>
+
+        <!-- Auto Loader -->
+        <rect class="n-flow" x="330" y="300" width="92" height="80" rx="10"/>
+        <text class="th" x="376" y="330" font-size="13" text-anchor="middle">Auto Loader</text>
+        <text class="t mut" x="376" y="348" font-size="10.5" text-anchor="middle">2 Append</text>
+        <text class="t mut" x="376" y="362" font-size="10.5" text-anchor="middle">Flows</text>
+
+        <!-- Bronze -->
+        <rect class="n-bronze" x="442" y="300" width="148" height="80" rx="10"/>
+        <text class="lay" x="516" y="324" font-size="10" text-anchor="middle" fill="var(--bronze)">bronze</text>
+        <text class="tm" x="516" y="344" font-size="10.5" text-anchor="middle">bronze_employees</text>
+        <text class="tm" x="516" y="360" font-size="10.5" text-anchor="middle">bronze_absences</text>
+        <circle class="badge" cx="516" cy="300" r="13"/><text class="badge-t" x="516" y="305" font-size="14">1</text>
+
+        <!-- Silver employees -->
+        <rect class="n-silver" x="630" y="160" width="170" height="84" rx="10"/>
+        <text class="lay" x="715" y="186" font-size="10" text-anchor="middle" fill="var(--silver)">silver</text>
+        <text class="tm" x="715" y="206" font-size="11" text-anchor="middle">silver_employees</text>
+        <text class="t mut" x="715" y="225" font-size="10.5" text-anchor="middle">enriched · departments join</text>
+        <circle class="badge" cx="715" cy="160" r="13"/><text class="badge-t" x="715" y="165" font-size="14">2</text>
+
+        <!-- MV window function -->
+        <rect class="n-silver" x="614" y="284" width="202" height="74" rx="10" style="stroke-dasharray:4 3"/>
+        <text class="tm" x="715" y="309" font-size="10" text-anchor="middle">silver_employees_last_extract</text>
+        <text class="t mut" x="715" y="326" font-size="10.5" text-anchor="middle">Materialized View</text>
+        <text class="tm" x="715" y="344" font-size="10" text-anchor="middle">ROW_NUMBER · LAG</text>
+        <circle class="badge" cx="816" cy="284" r="11"/><text class="badge-t" x="816" y="288.5" font-size="12">3</text>
+
+        <!-- Silver absences -->
+        <rect class="n-silver" x="630" y="436" width="170" height="84" rx="10"/>
+        <text class="lay" x="715" y="462" font-size="10" text-anchor="middle" fill="var(--silver)">silver</text>
+        <text class="tm" x="715" y="482" font-size="11" text-anchor="middle">silver_absences</text>
+        <text class="t mut" x="715" y="501" font-size="10.5" text-anchor="middle">quality · free-text note</text>
+        <circle class="badge" cx="715" cy="436" r="13"/><text class="badge-t" x="715" y="441" font-size="14">4</text>
+
+        <!-- Gold -->
+        <rect class="n-goldwrap" x="830" y="170" width="210" height="340" rx="12"/>
+        <text class="lay" x="935" y="196" font-size="11" text-anchor="middle" fill="var(--gold)">gold</text>
+
+        <rect class="goldrow" x="842" y="208" width="186" height="54" rx="8"/>
+        <text class="tm" x="870" y="230" font-size="10">gold_employees_current</text>
+        <text class="t mut" x="870" y="248" font-size="10">Auto CDC · SCD 1 · current state</text>
+        <circle class="badge" cx="856" cy="228" r="11"/><text class="badge-t" x="856" y="232.5" font-size="12">5</text>
+
+        <rect class="goldrow" x="842" y="270" width="186" height="54" rx="8"/>
+        <text class="tm" x="870" y="292" font-size="10">gold_employees_history</text>
+        <text class="t mut" x="870" y="310" font-size="10">Auto CDC · SCD 2 · TRACK</text>
+        <circle class="badge" cx="856" cy="290" r="11"/><text class="badge-t" x="856" y="294.5" font-size="12">6</text>
+
+        <rect class="goldrow" x="842" y="440" width="186" height="54" rx="8"/>
+        <text class="tm" x="870" y="462" font-size="10">gold_employee_360</text>
+        <text class="t mut" x="870" y="480" font-size="10">Materialized View · 360° view</text>
+        <circle class="badge" cx="856" cy="460" r="11"/><text class="badge-t" x="856" y="464.5" font-size="12">7</text>
+
+        <!-- Consumer -->
+        <rect class="box" x="1100" y="250" width="174" height="180" rx="12"/>
+        <text class="th" x="1187" y="286" font-size="14" text-anchor="middle">Consumption</text>
+        <text class="t" x="1187" y="314" font-size="12" text-anchor="middle">AI/BI dashboards</text>
+        <text class="t" x="1187" y="334" font-size="12" text-anchor="middle">Genie · Apps</text>
+        <text class="t" x="1187" y="354" font-size="12" text-anchor="middle">Notebooks</text>
+        <line x1="1120" y1="374" x2="1254" y2="374" stroke="var(--line)" stroke-width="1"/>
+        <text class="t mut" x="1187" y="394" font-size="11" text-anchor="middle">governed by</text>
+        <text class="th" x="1187" y="412" font-size="12.5" text-anchor="middle" fill="var(--accent)">Unity Catalog</text>
+        <circle class="badge" cx="1187" cy="250" r="13"/><text class="badge-t" x="1187" y="255" font-size="14">8</text>
+      </svg>
+      <figcaption>The pipeline (in SQL or Python: same tables in <code>acme_hr_en_sql</code> and <code>acme_hr_en_python</code>) concatenates the 2 subsidiaries (Append Flows),
+      then produces trusted tables: bronze → silver (Expectations, window functions) → gold (Auto CDC, Materialized View).</figcaption>
+    </figure>
+   </div>
+  </div>
+
+  <div class="steps">
+    <article class="card bronze">
+      <div class="chead"><span class="num">1</span><span class="tag">Bronze · Append Flows</span></div>
+      <h3>Ingestion and concatenation</h3>
+      <p>Each subsidiary drops its files into its Volume. <b>Auto Loader</b> reads them, and
+      <b>one Append Flow per subsidiary</b> writes into the same table, with <code>source_entity</code>.
+      A 3rd subsidiary = one more flow, no full refresh.</p>
+      <div class="tbl">bronze_employees<br>bronze_absences</div>
+    </article>
+
+    <article class="card silver">
+      <div class="chead"><span class="num">2</span><span class="tag">Silver · Expectations</span></div>
+      <h3>Employee quality &amp; enrichment</h3>
+      <p>Typing, derived columns (<code>age_bracket</code>, seniority), join to the <code>departments</code>
+      reference. <b>Expectations</b> drop or flag non-compliant rows.</p>
+      <div class="tbl">silver_employees</div>
+    </article>
+
+    <article class="card silver">
+      <div class="chead"><span class="num">3</span><span class="tag">Silver · Window functions</span></div>
+      <h3>Deduplicated latest delivery</h3>
+      <p>In the latest file of each subsidiary, <code>ROW_NUMBER()</code> keeps the most recent version
+      of each employee; <code>LAG()</code> shows what the correction changed. A
+      <b>Materialized View</b>: windows are not supported in streaming.</p>
+      <div class="tbl">silver_employees_last_extract</div>
+    </article>
+
+    <article class="card silver">
+      <div class="chead"><span class="num">4</span><span class="tag">Silver · Expectations</span></div>
+      <h3>Absence quality</h3>
+      <p>Consistent dates, plausible duration, known type. The <b>free-text note</b>
+      (<code>comment</code>) is kept, empty strings become NULL.</p>
+      <div class="tbl">silver_absences</div>
+    </article>
+
+    <article class="card gold">
+      <div class="chead"><span class="num">5</span><span class="tag">Gold · Auto CDC · SCD 1</span></div>
+      <h3>Current state per employee</h3>
+      <p><b>Auto CDC</b> in SCD Type 1: one up-to-date row per employee, <b>incrementally</b>. The
+      <code>STRUCT(extract_ts, updated_at)</code> sequence breaks ties between duplicates of the same file.</p>
+      <div class="tbl">gold_employees_current</div>
+    </article>
+
+    <article class="card gold">
+      <div class="chead"><span class="num">6</span><span class="tag">Gold · Auto CDC · SCD 2</span></div>
+      <h3>Mobility history</h3>
+      <p>SCD Type 2 with <code>TRACK HISTORY ON</code> department, contract and job title
+      (<code>__START_AT</code> / <code>__END_AT</code>).</p>
+      <div class="tbl">gold_employees_history</div>
+    </article>
+
+    <article class="card gold">
+      <div class="chead"><span class="num">7</span><span class="tag">Gold · Materialized View</span></div>
+      <h3>360° employee view</h3>
+      <p>A <b>Materialized View</b> combines the current state with the year-to-date absence KPIs; the
+      result is stored and refreshed on every pipeline update.</p>
+      <div class="tbl">gold_employee_360</div>
+    </article>
+
+    <article class="card flow">
+      <div class="chead"><span class="num">8</span><span class="tag">Unity Catalog</span></div>
+      <h3>Governed consumption</h3>
+      <p>AI/BI dashboards, Genie, apps or notebooks read the gold tables: access, lineage and audit
+      <b>governed by Unity Catalog</b>.</p>
+      <div class="tbl">Dashboard · Genie · App · Notebook</div>
+    </article>
+  </div>
+
+  <div class="stack">
+    <span class="lbl">Features</span>
+    <span class="pill">SQL + Python</span>
+    <span class="pill">Auto Loader</span>
+    <span class="pill">Append Flows</span>
+    <span class="pill">Window functions</span>
+    <span class="pill">Expectations</span>
+    <span class="pill">Auto CDC · SCD 1/2</span>
+    <span class="pill">Materialized View</span>
+    <span class="pill">CLUSTER BY AUTO</span>
+    <span class="pill">Unity Catalog</span>
+  </div>
+</div>
